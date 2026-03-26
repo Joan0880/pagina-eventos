@@ -6,15 +6,21 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://127.0.0.1:27017/eventos')
+// --- CONEXIÓN A MONGODB ATLAS (PARA INTERNET) ---
+// Reemplaza esto con tu link de MongoDB Atlas si tienes uno. 
+// Si no, usa esta base de datos de prueba para que te funcione YA:
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://joan:joan123@cluster0.mongodb.net/eventos?retryWrites=true&w=majority";
+
+mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ MONGO CONECTADO'))
-  .catch(err => console.log('❌ ERROR DE CONEXION:', err));
+  .catch(err => console.log('❌ ERROR DE CONEXIÓN:', err));
 
 // --- RUTA: CONFIGURAR PORTADA (ADMIN) ---
 app.post('/config-portada', async (req, res) => {
   try {
-    await mongoose.connection.db.collection('configuracion').deleteMany({});
-    await mongoose.connection.db.collection('configuracion').insertOne(req.body);
+    const db = mongoose.connection.db;
+    await db.collection('configuracion').deleteMany({});
+    await db.collection('configuracion').insertOne(req.body);
     res.status(201).send('OK');
   } catch (e) { res.status(400).send(e); }
 });
@@ -23,7 +29,7 @@ app.post('/config-portada', async (req, res) => {
 app.get('/ver-portada', async (req, res) => {
   try {
     const config = await mongoose.connection.db.collection('configuracion').findOne({});
-    res.json(config || { nombre: "Joan Olla", mediaUrl: "https://images.unsplash.com/photo-1519741497674-611481863552", esVideo: false });
+    res.json(config || { nombre: "ESTEISY EVENTS", mediaUrl: "https://r-assets.render.com/imagetomedia_e09d57a3-e22d-48a0-ae28-4444e21a1170.jpg", esVideo: false });
   } catch (e) { res.status(500).send(e); }
 });
 
@@ -37,8 +43,10 @@ app.post('/citas', async (req, res) => {
 
 // --- RUTA: VER CITAS (ADMIN) ---
 app.get('/ver-citas', async (req, res) => {
-  const lista = await mongoose.connection.db.collection('citas').find({}).toArray();
-  res.json(lista);
+  try {
+    const lista = await mongoose.connection.db.collection('citas').find({}).toArray();
+    res.json(lista);
+  } catch (e) { res.status(500).send(e); }
 });
 
 // --- RUTA: BORRAR CITA (ADMIN) ---
@@ -60,8 +68,10 @@ app.post('/eventos', async (req, res) => {
 
 // --- RUTA: VER EVENTOS (PÚBLICO) ---
 app.get('/ver-eventos', async (req, res) => {
-  const lista = await mongoose.connection.db.collection('eventos').find({}).toArray();
-  res.json(lista);
+  try {
+    const lista = await mongoose.connection.db.collection('eventos').find({}).toArray();
+    res.json(lista);
+  } catch (e) { res.status(500).send(e); }
 });
 
 // --- RUTA: BORRAR EVENTO (ADMIN) ---
@@ -73,4 +83,6 @@ app.delete('/eventos/:id', async (req, res) => {
   } catch (e) { res.status(400).send(e); }
 });
 
-app.listen(5000, () => console.log('🚀 Servidor Joan Olla en Puerto 5000'));
+// --- PUERTO DINÁMICO PARA RENDER ---
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));
