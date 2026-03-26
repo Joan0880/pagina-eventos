@@ -4,7 +4,7 @@ import './App.css';
 function Publico() {
   const [eventos, setEventos] = useState([]);
   const [seleccionado, setSeleccionado] = useState(null);
-  const [config, setConfig] = useState({ nombre: "Joan Olla", mediaUrl: "", esVideo: false });
+  const [config, setConfig] = useState({ nombre: "Esteisy-Events", mediaUrl: "", esVideo: false });
   
   // Estados del Formulario de Citas
   const [fNombre, setFNombre] = useState('');
