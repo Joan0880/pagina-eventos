@@ -12,11 +12,19 @@ function Publico() {
   const [form, setForm] = useState({ nombre: '', telefono: '', tipoEvento: '' });
 
   const API_URL = "https://pagina-eventos-backend.onrender.com";
-  const MI_WHATSAPP = "1809XXXXXXX"; // <--- PON TU NÚMERO AQUÍ JOAN
+  const MI_WHATSAPP = "18092523274"; // <--- AQUÍ YA TIENES TU WHATSAPP
 
   useEffect(() => {
-    fetch(`${API_URL}/ver-eventos`).then(res => res.json()).then(data => { if(Array.isArray(data)) setEventos(data); });
-    fetch(`${API_URL}/ver-portada`).then(res => res.json()).then(data => { if(data && data.nombre) setPortada(data); });
+    // EL TRUCO: Agregamos ?t= al final para que no use la memoria vieja
+    const tiempo = new Date().getTime();
+
+    fetch(`${API_URL}/ver-eventos?t=${tiempo}`)
+      .then(res => res.json())
+      .then(data => { if(Array.isArray(data)) setEventos(data); });
+
+    fetch(`${API_URL}/ver-portada?t=${tiempo}`)
+      .then(res => res.json())
+      .then(data => { if(data && data.nombre) setPortada(data); });
   }, []);
 
   const enviarCotizacion = async (e) => {
@@ -40,28 +48,40 @@ function Publico() {
     <div style={{ backgroundColor: '#050505', color: 'white', fontFamily: 'sans-serif' }}>
       
       {/* PORTADA */}
-      <header style={{ height: '100vh', backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${portada.mediaUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '4rem', color: '#d4af37', letterSpacing: '5px' }}>{portada.nombre}</h1>
+      <header style={{ 
+        height: '100vh', 
+        backgroundImage: portada.mediaUrl ? `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${portada.mediaUrl})` : 'none', 
+        backgroundColor: '#000',
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center', 
+        backgroundAttachment: 'fixed', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        textAlign: 'center' 
+      }}>
+        <h1 style={{ fontSize: '4rem', color: '#d4af37', letterSpacing: '5px', textTransform: 'uppercase' }}>{portada.nombre}</h1>
         <p style={{ fontSize: '1.2rem', fontStyle: 'italic' }}>Experiencias inolvidables en RD.</p>
         <a href="#contacto" style={{ marginTop: '30px', padding: '15px 40px', background: '#d4af37', color: 'black', fontWeight: 'bold', textDecoration: 'none', borderRadius: '50px' }}>RESERVAR AHORA</a>
       </header>
 
-      {/* GALERÍA (ESTO CONECTA CON EL ADMIN) */}
+      {/* GALERÍA */}
       <section style={{ padding: '80px 5%' }}>
         <h2 style={{ textAlign: 'center', color: '#d4af37', marginBottom: '40px' }}>Galería de Eventos</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {eventos.map(ev => (
+          {eventos.length > 0 ? eventos.map(ev => (
             <div key={ev._id} style={{ borderRadius: '15px', overflow: 'hidden', position: 'relative', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
               <img src={ev.mediaUrl} style={{ width: '100%', height: '350px', objectFit: 'cover' }} alt={ev.nombre} />
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.9))', padding: '20px' }}>
                 <h4 style={{ margin: 0 }}>{ev.nombre}</h4>
               </div>
             </div>
-          ))}
+          )) : <p style={{ textAlign: 'center', width: '100%', color: '#444' }}>No hay fotos en la galería aún.</p>}
         </div>
       </section>
 
-      {/* FORMULARIO CONECTADO A TODO */}
+      {/* FORMULARIO */}
       <section id="contacto" style={{ padding: '100px 20px', background: '#000' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', background: '#111', padding: '40px', borderRadius: '20px', border: '1px solid #d4af37' }}>
           <h2 style={{ textAlign: 'center', color: '#d4af37' }}>Solicita tu Cotización</h2>
@@ -80,7 +100,11 @@ function Publico() {
       </section>
 
       {/* BOTÓN WHATSAPP */}
-      <a href={`https://wa.me/${MI_WHATSAPP}`} target="_blank" rel="noreferrer" style={{ position: 'fixed', bottom: '30px', right: '30px', backgroundColor: '#25d366', color: 'white', padding: '20px', borderRadius: '50%', zIndex: 1000 }}>WS</a>
+      <a href={`https://wa.me/${MI_WHATSAPP}`} target="_blank" rel="noreferrer" style={{ position: 'fixed', bottom: '30px', right: '30px', backgroundColor: '#25d366', color: 'white', padding: '20px', borderRadius: '50%', zIndex: 1000, boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
+        <svg width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326z"/>
+        </svg>
+      </a>
     </div>
   );
 }
