@@ -1,89 +1,126 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
 function Publico() {
-  const [config] = useState({ 
-    nombre: "ESTEISY EVENTS", 
-    mediaUrl: "https://r-assets.render.com/imagetomedia_e09d57a3-e22d-48a0-ae28-4444e21a1170.jpg", 
-    logoUrl: "https://r-assets.render.com/imagetomedia_a2105151-5360-4416-8c46-d2495b45df86.png"
+  const [eventos, setEventos] = useState([]);
+  const [portada, setPortada] = useState({
+    nombre: "ESTEISY EVENTS",
+    mediaUrl: "https://images.unsplash.com/photo-1519741497674-611481863552",
+    esVideo: false
   });
 
-  const [eventos] = useState([
-    { _id: '1', nombre: 'Boda Real', mediaUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800' },
-    { _id: '2', nombre: 'Cumpleaños de Gala', mediaUrl: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?q=80&w=800' },
-    { _id: '3', nombre: 'Baby Shower', mediaUrl: 'https://images.unsplash.com/photo-1519225495810-753b31473e2e?q=80&w=800' }
-  ]);
+  const API_URL = "https://pagina-eventos-backend.onrender.com";
 
-  const [seleccionado, setSeleccionado] = useState(null);
-  const [fNombre, setFNombre] = useState('');
-  const [fEvento, setFEvento] = useState('Boda');
-  const [fFecha, setFFecha] = useState('');
-  const [fTelefono, setFTelefono] = useState('');
-
-  const enviarCita = (e) => {
-    e.preventDefault();
-    alert(`¡Solicitud enviada, ${fNombre}! Joan se pondrá en contacto pronto por WhatsApp.`);
-    setFNombre(''); setFFecha(''); setFTelefono('');
-  };
+  useEffect(() => {
+    fetch(`${API_URL}/ver-eventos`).then(res => res.json()).then(data => setEventos(data));
+    fetch(`${API_URL}/ver-portada`).then(res => res.json()).then(data => { if(data.nombre) setPortada(data); });
+  }, []);
 
   return (
-    <div className="App" style={{background: '#000', color: 'white', minHeight: '100vh'}}>
-      {/* PORTADA CON TU FOTO Y LOGO */}
-      <header style={{
-        height: '85vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center',
-        background: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(${config.mediaUrl}) no-repeat center center/cover`
+    <div style={{ backgroundColor: '#050505', color: 'white', fontFamily: "'Poppins', sans-serif" }}>
+      
+      {/* 1. PORTADA IMPACTANTE (HERO) */}
+      <header style={{ 
+        height: '100vh', 
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${portada.mediaUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center'
       }}>
-        <img src={config.logoUrl} alt="Logo" style={{ width: '160px', borderRadius: '50%', marginBottom: '20px', border: '3px solid #d4af37' }} />
-        <h1 style={{fontSize: '3.5rem', color: '#d4af37', fontWeight: 'bold'}}>{config.nombre}</h1>
-        <p style={{letterSpacing: '3px', textTransform: 'uppercase'}}>Diseño y Planificación de Eventos Exclusivos</p>
-        <div style={{display: 'flex', gap: '15px', marginTop: '30px'}}>
-          <a href="https://wa.me/18098372057" target="_blank" rel="noreferrer" style={{border: '2px solid #25d366', color: '#25d366', padding: '12px 25px', textDecoration: 'none', borderRadius: '50px', fontWeight: 'bold'}}>WhatsApp</a>
-          <a href="https://instagram.com/joan_cuevas01" target="_blank" rel="noreferrer" style={{border: '2px solid #E1306C', color: '#E1306C', padding: '12px 25px', textDecoration: 'none', borderRadius: '50px', fontWeight: 'bold'}}>Instagram</a>
-        </div>
+        <h1 style={{ fontSize: '4rem', color: '#d4af37', letterSpacing: '5px', marginBottom: '10px', textShadow: '2px 2px 10px rgba(0,0,0,0.5)' }}>
+          {portada.nombre}
+        </h1>
+        <p style={{ fontSize: '1.2rem', maxWidth: '600px', fontStyle: 'italic', opacity: 0.9 }}>
+          Creamos experiencias inolvidables. Desde la planificación hasta el último detalle de tu gran día.
+        </p>
+        <a href="#contacto" style={{ 
+          marginTop: '30px', padding: '15px 40px', background: '#d4af37', color: 'black', 
+          fontWeight: 'bold', textDecoration: 'none', borderRadius: '50px', transition: '0.3s' 
+        }}>RESERVAR AHORA</a>
       </header>
 
-      {/* GALERÍA DE EVENTOS */}
-      <section style={{padding: '60px 20px'}}>
-        <h2 style={{textAlign: 'center', color: '#d4af37', fontSize: '2.5rem', marginBottom: '40px'}}>EXPERIENCIAS DE LUJO</h2>
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', maxWidth: '1200px', margin: '0 auto'}}>
-          {eventos.map(ev => (
-            <div key={ev._id} style={{background: '#111', padding: '20px', borderRadius: '15px', border: '1px solid #333', textAlign: 'center'}}>
-              <img src={ev.mediaUrl} alt={ev.nombre} style={{width: '100%', height: '250px', objectFit: 'cover', borderRadius: '10px'}} />
-              <h3 style={{margin: '20px 0'}}>{ev.nombre}</h3>
-              <button onClick={() => setSeleccionado(ev)} style={{background: '#d4af37', width: '100%', padding: '15px', border: 'none', fontWeight: 'bold', cursor: 'pointer', borderRadius: '5px'}}>VER DETALLES</button>
+      {/* 2. SECCIÓN DE SERVICIOS (PROFESIONAL) */}
+      <section style={{ padding: '80px 20px', textAlign: 'center', background: '#0a0a0a' }}>
+        <h2 style={{ color: '#d4af37', fontSize: '2.5rem', marginBottom: '50px' }}>Nuestros Servicios VIP</h2>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', flexWrap: 'wrap' }}>
+          {['Bodas de Lujo', 'XV Años', 'Eventos Corporativos', 'Baby Showers'].map(serv => (
+            <div key={serv} style={{ background: '#111', padding: '30px', borderRadius: '15px', width: '250px', border: '1px solid #222' }}>
+              <h3 style={{ color: '#d4af37' }}>{serv}</h3>
+              <p style={{ fontSize: '0.9rem', color: '#888' }}>Logística completa y decoración personalizada para que no te preocupes por nada.</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* FORMULARIO DE CITAS (QUE TE HABÍA QUITADO) */}
-      <section style={{padding: '80px 20px', background: '#0a0a0a'}}>
-        <h2 style={{textAlign: 'center', color: '#d4af37', marginBottom: '40px'}}>RESERVA TU FECHA</h2>
-        <form onSubmit={enviarCita} style={{maxWidth: '500px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '15px'}}>
-          <input placeholder="Nombre Completo" value={fNombre} onChange={e => setFNombre(e.target.value)} required style={{padding: '15px', background: '#1a1a1a', color: 'white', border: '1px solid #333', borderRadius: '5px'}} />
-          <select value={fEvento} onChange={e => setFEvento(e.target.value)} style={{padding: '15px', background: '#1a1a1a', color: 'white', border: '1px solid #333', borderRadius: '5px'}}>
-            <option value="Boda">Boda</option>
-            <option value="Cumpleaños">Cumpleaños</option>
-            <option value="Baby Shower">Baby Shower</option>
-            <option value="Otro">Otro</option>
-          </select>
-          <input type="date" value={fFecha} onChange={e => setFFecha(e.target.value)} required style={{padding: '15px', background: '#1a1a1a', color: 'white', border: '1px solid #333', borderRadius: '5px'}} />
-          <input placeholder="WhatsApp" value={fTelefono} onChange={e => setFTelefono(e.target.value)} required style={{padding: '15px', background: '#1a1a1a', color: 'white', border: '1px solid #333', borderRadius: '5px'}} />
-          <button type="submit" style={{background: '#d4af37', color: 'black', padding: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', borderRadius: '5px'}}>ENVIAR SOLICITUD</button>
-        </form>
+      {/* 3. GALERÍA DE EVENTOS (CATÁLOGO) */}
+      <section id="galeria" style={{ padding: '80px 5%' }}>
+        <h2 style={{ textAlign: 'center', color: '#d4af37', marginBottom: '40px' }}>Galería de Sueños Realizados</h2>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+          gap: '20px' 
+        }}>
+          {eventos.map(ev => (
+            <div key={ev._id} style={{ 
+              borderRadius: '15px', overflow: 'hidden', position: 'relative', 
+              boxShadow: '0 10px 30px rgba(0,0,0,0.5)', cursor: 'pointer' 
+            }}>
+              <img src={ev.mediaUrl} style={{ width: '100%', height: '350px', objectFit: 'cover', display: 'block' }} alt={ev.nombre} />
+              <div style={{ 
+                position: 'absolute', bottom: 0, left: 0, right: 0, 
+                background: 'linear-gradient(transparent, rgba(0,0,0,0.9))', padding: '20px' 
+              }}>
+                <h4 style={{ margin: 0, fontSize: '1.2rem' }}>{ev.nombre}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
-      {/* VENTANA DE DETALLES (OVERLAY) */}
-      {seleccionado && (
-        <div style={{position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.95)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '20px'}}>
-          <div style={{background: '#111', padding: '30px', border: '1px solid #d4af37', maxWidth: '600px', width: '100%', textAlign: 'center', borderRadius: '15px', position: 'relative'}}>
-            <button onClick={() => setSeleccionado(null)} style={{position: 'absolute', top: '10px', right: '20px', color: 'white', background: 'none', border: 'none', fontSize: '30px', cursor: 'pointer'}}>×</button>
-            <h2 style={{color: '#d4af37', marginBottom: '20px'}}>{seleccionado.nombre}</h2>
-            <img src={seleccionado.mediaUrl} style={{width: '100%', borderRadius: '10px', marginBottom: '20px'}} alt="evento"/>
-            <button onClick={() => window.open(`https://wa.me/18098372057?text=Hola Joan, me interesa cotizar: ${seleccionado.nombre}`)} style={{width: '100%', padding: '15px', background: '#25d366', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer'}}>SOLICITAR POR WHATSAPP</button>
-          </div>
+      {/* 4. FORMULARIO DE CONTACTO */}
+      <section id="contacto" style={{ padding: '100px 20px', background: 'linear-gradient(#0a0a0a, #000)' }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto', background: '#111', padding: '40px', borderRadius: '20px', border: '1px solid #d4af37' }}>
+          <h2 style={{ textAlign: 'center', color: '#d4af37' }}>Solicita tu Cotización</h2>
+          <form style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
+            <input placeholder="Nombre Completo" style={{ padding: '15px', background: '#222', border: 'none', color: 'white', borderRadius: '8px' }} />
+            <input placeholder="Teléfono" style={{ padding: '15px', background: '#222', border: 'none', color: 'white', borderRadius: '8px' }} />
+            <select style={{ padding: '15px', background: '#222', border: 'none', color: 'white', borderRadius: '8px' }}>
+              <option>Tipo de Evento</option>
+              <option>Boda</option>
+              <option>Cumpleaños</option>
+              <option>Corporativo</option>
+            </select>
+            <button style={{ 
+              padding: '15px', background: '#d4af37', color: 'black', fontWeight: 'bold', 
+              border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '1.1rem' 
+            }}>ENVIAR SOLICITUD</button>
+          </form>
         </div>
-      )}
+      </section>
+
+      {/* 5. WHATSAPP FLOTANTE */}
+      <a 
+        href="https://wa.me/1809XXXXXXX" // PON TU NUMERO AQUI JOAN
+        target="_blank" rel="noreferrer"
+        style={{ 
+          position: 'fixed', bottom: '30px', right: '30px', 
+          backgroundColor: '#25d366', color: 'white', padding: '20px', 
+          borderRadius: '50%', boxShadow: '0 5px 15px rgba(0,0,0,0.3)', zIndex: 1000
+        }}
+      >
+        <svg width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326z"/>
+        </svg>
+      </a>
+
+      {/* FOOTER */}
+      <footer style={{ padding: '40px', textAlign: 'center', borderTop: '1px solid #222' }}>
+        <p style={{ color: '#555' }}>© 2026 {portada.nombre} - Santo Domingo, RD. Calidad y Elegancia.</p>
+      </footer>
     </div>
   );
 }
