@@ -11,12 +11,20 @@ function Publico() {
   const API_URL = "https://pagina-eventos-backend.onrender.com";
 
   useEffect(() => {
-    fetch(`${API_URL}/ver-eventos`).then(res => res.json()).then(data => setEventos(data));
-    fetch(`${API_URL}/ver-portada`).then(res => res.json()).then(data => { if(data.nombre) setPortada(data); });
+    // Agregamos un catch por si el backend está dormido, que no se ponga blanca la pantalla
+    fetch(`${API_URL}/ver-eventos`)
+      .then(res => res.json())
+      .then(data => { if(Array.isArray(data)) setEventos(data); })
+      .catch(err => console.log("Backend cargando..."));
+
+    fetch(`${API_URL}/ver-portada`)
+      .then(res => res.json())
+      .then(data => { if(data && data.nombre) setPortada(data); })
+      .catch(err => console.log("Backend cargando..."));
   }, []);
 
   return (
-    <div style={{ backgroundColor: '#050505', color: 'white', fontFamily: "'Poppins', sans-serif" }}>
+    <div style={{ backgroundColor: '#050505', color: 'white', fontFamily: 'sans-serif', margin: 0, padding: 0 }}>
       
       {/* 1. PORTADA IMPACTANTE (HERO) */}
       <header style={{ 
@@ -39,24 +47,24 @@ function Publico() {
         </p>
         <a href="#contacto" style={{ 
           marginTop: '30px', padding: '15px 40px', background: '#d4af37', color: 'black', 
-          fontWeight: 'bold', textDecoration: 'none', borderRadius: '50px', transition: '0.3s' 
+          fontWeight: 'bold', textDecoration: 'none', borderRadius: '50px'
         }}>RESERVAR AHORA</a>
       </header>
 
-      {/* 2. SECCIÓN DE SERVICIOS (PROFESIONAL) */}
+      {/* 2. SECCIÓN DE SERVICIOS */}
       <section style={{ padding: '80px 20px', textAlign: 'center', background: '#0a0a0a' }}>
         <h2 style={{ color: '#d4af37', fontSize: '2.5rem', marginBottom: '50px' }}>Nuestros Servicios VIP</h2>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', flexWrap: 'wrap' }}>
           {['Bodas de Lujo', 'XV Años', 'Eventos Corporativos', 'Baby Showers'].map(serv => (
             <div key={serv} style={{ background: '#111', padding: '30px', borderRadius: '15px', width: '250px', border: '1px solid #222' }}>
               <h3 style={{ color: '#d4af37' }}>{serv}</h3>
-              <p style={{ fontSize: '0.9rem', color: '#888' }}>Logística completa y decoración personalizada para que no te preocupes por nada.</p>
+              <p style={{ fontSize: '0.9rem', color: '#888' }}>Logística completa y decoración personalizada.</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 3. GALERÍA DE EVENTOS (CATÁLOGO) */}
+      {/* 3. GALERÍA DE EVENTOS */}
       <section id="galeria" style={{ padding: '80px 5%' }}>
         <h2 style={{ textAlign: 'center', color: '#d4af37', marginBottom: '40px' }}>Galería de Sueños Realizados</h2>
         <div style={{ 
@@ -64,62 +72,41 @@ function Publico() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
           gap: '20px' 
         }}>
-          {eventos.map(ev => (
-            <div key={ev._id} style={{ 
-              borderRadius: '15px', overflow: 'hidden', position: 'relative', 
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5)', cursor: 'pointer' 
-            }}>
+          {eventos.length > 0 ? eventos.map(ev => (
+            <div key={ev._id} style={{ borderRadius: '15px', overflow: 'hidden', position: 'relative', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
               <img src={ev.mediaUrl} style={{ width: '100%', height: '350px', objectFit: 'cover', display: 'block' }} alt={ev.nombre} />
-              <div style={{ 
-                position: 'absolute', bottom: 0, left: 0, right: 0, 
-                background: 'linear-gradient(transparent, rgba(0,0,0,0.9))', padding: '20px' 
-              }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.9))', padding: '20px' }}>
                 <h4 style={{ margin: 0, fontSize: '1.2rem' }}>{ev.nombre}</h4>
               </div>
             </div>
-          ))}
+          )) : <p style={{textAlign: 'center', width: '100%'}}>Cargando galería...</p>}
         </div>
       </section>
 
       {/* 4. FORMULARIO DE CONTACTO */}
-      <section id="contacto" style={{ padding: '100px 20px', background: 'linear-gradient(#0a0a0a, #000)' }}>
+      <section id="contacto" style={{ padding: '100px 20px', background: '#000' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', background: '#111', padding: '40px', borderRadius: '20px', border: '1px solid #d4af37' }}>
           <h2 style={{ textAlign: 'center', color: '#d4af37' }}>Solicita tu Cotización</h2>
-          <form style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
             <input placeholder="Nombre Completo" style={{ padding: '15px', background: '#222', border: 'none', color: 'white', borderRadius: '8px' }} />
             <input placeholder="Teléfono" style={{ padding: '15px', background: '#222', border: 'none', color: 'white', borderRadius: '8px' }} />
-            <select style={{ padding: '15px', background: '#222', border: 'none', color: 'white', borderRadius: '8px' }}>
-              <option>Tipo de Evento</option>
-              <option>Boda</option>
-              <option>Cumpleaños</option>
-              <option>Corporativo</option>
-            </select>
-            <button style={{ 
-              padding: '15px', background: '#d4af37', color: 'black', fontWeight: 'bold', 
-              border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '1.1rem' 
-            }}>ENVIAR SOLICITUD</button>
-          </form>
+            <button style={{ padding: '15px', background: '#d4af37', color: 'black', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>ENVIAR SOLICITUD</button>
+          </div>
         </div>
       </section>
 
       {/* 5. WHATSAPP FLOTANTE */}
       <a 
-        href="https://wa.me/1809XXXXXXX" // PON TU NUMERO AQUI JOAN
+        href="https://wa.me/18095551234" 
         target="_blank" rel="noreferrer"
-        style={{ 
-          position: 'fixed', bottom: '30px', right: '30px', 
-          backgroundColor: '#25d366', color: 'white', padding: '20px', 
-          borderRadius: '50%', boxShadow: '0 5px 15px rgba(0,0,0,0.3)', zIndex: 1000
-        }}
+        style={{ position: 'fixed', bottom: '30px', right: '30px', backgroundColor: '#25d366', color: 'white', padding: '20px', borderRadius: '50%', zIndex: 1000 }}
       >
-        <svg width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326z"/>
-        </svg>
+        WS
       </a>
 
       {/* FOOTER */}
       <footer style={{ padding: '40px', textAlign: 'center', borderTop: '1px solid #222' }}>
-        <p style={{ color: '#555' }}>© 2026 {portada.nombre} - Santo Domingo, RD. Calidad y Elegancia.</p>
+        <p style={{ color: '#555' }}>© 2026 {portada.nombre} - Santo Domingo, RD.</p>
       </footer>
     </div>
   );
