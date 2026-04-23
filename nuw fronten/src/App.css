@@ -1,60 +1,42 @@
-/* =========================================
-   App.css - Diseño Premium Joan Olla Eventos
-   ========================================= */
+import React from 'react';
 
-:root {
-  --color-negro-fondo: #121212;
-  --color-negro-card: #1e1e1e;
-  --color-dorado-principal: #d4af37;
-  --color-blanco-texto: #ffffff;
+function App() {
+  return (
+    <div className="main-container">
+      {/* Header Minimalista */}
+      <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '2rem 5%', borderBottom: '1px solid #eee' }}>
+        <div style={{ fontSize: '0.8rem', letterSpacing: '2px' }}>CATÁLOGO</div>
+        <div style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>ESTEISY EVENTS</div>
+        <div style={{ fontSize: '0.8rem', letterSpacing: '2px' }}>COTIZACIÓN (0)</div>
+      </nav>
+
+      {/* Banner Principal (Hero) */}
+      <section style={{ height: '70vh', background: '#e0e0e0', position: 'relative', overflow: 'hidden' }}>
+        <img 
+          src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2000" 
+          alt="Evento" 
+          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: '0.8' }}
+        />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <h1 style={{ fontSize: '4rem', color: 'white', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>Calidad para tu evento</h1>
+          <button style={{ padding: '1rem 2rem', background: 'white', border: 'none', cursor: 'pointer' }}>VER PRODUCTOS</button>
+        </div>
+      </section>
+
+      {/* Grid de Productos Destacados */}
+      <section style={{ padding: '5rem 5%' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '3rem' }}>Colección Destacada</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px' }}>
+          {/* Mapear tus productos aquí */}
+          <div className="product-card">
+            <div style={{ height: '350px', background: '#f5f5f5', marginBottom: '1rem' }}></div>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '1px', margin: '0' }}>SILLA TIFFANY BLANCA</p>
+            <p style={{ fontWeight: 'bold' }}>RD$ 125.00</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
 
-body {
-  margin: 0; padding: 0;
-  background-color: var(--color-negro-fondo);
-  color: var(--color-blanco-texto);
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-.App { text-align: center; }
-
-h2 { font-size: 2.5rem; color: var(--color-dorado-principal); text-transform: uppercase; letter-spacing: 2px; }
-
-/* 1. HERO & SOCIAL */
-.Hero { height: 70vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #222 0%, #121212 100%); }
-.Hero-content h1 { font-size: 4rem; color: var(--color-dorado-principal); margin: 0; text-transform: uppercase; letter-spacing: 3px; }
-.Hero-content p { color: #b3b3b3; margin-bottom: 30px; }
-.Social-Buttons { display: flex; gap: 15px; justify-content: center; }
-.Btn-Whatsapp { padding: 10px 20px; background: transparent; border: 2px solid #25d366; color: #25d366; text-decoration: none; font-weight: bold; }
-.Btn-Instagram { padding: 10px 20px; background: transparent; border: 2px solid #c13584; color: #c13584; text-decoration: none; font-weight: bold; }
-
-/* 2. GALLERY GRID */
-.Gallery-Section { padding: 50px 20px; background: var(--color-negro-card); }
-.Gallery-Grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-.Event-Card { background: #1a1a1a; border: 1px solid #333; overflow: hidden; }
-.Image-Container { width: 100%; height: 200px; }
-.Image-Container img { width: 100%; height: 100%; object-fit: cover; }
-.Card-Info { padding: 15px; }
-.Btn-Cotizar { width: 100%; padding: 10px; background: var(--color-dorado-principal); color: var(--color-negro-fondo); border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-
-/* 3. VISUAL PORTAFOLIO MODAL (EL CINE) */
-.Cotizador-Overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-.Cotizador-Card.Visual-Portafolio { background: #1a1a1a; padding: 20px; border: 2px solid var(--color-dorado-principal); max-width: 900px; width: 95%; max-height: 90vh; overflow-y: auto; text-align: center; }
-.Cotizador-Header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; margin-bottom: 20px; padding-bottom: 10px; }
-.Btn-Cerrar { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
-
-.Visual-Display { width: 100%; height: 50vh; background: black; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 20px; }
-.Img-Full { max-width: 100%; max-height: 100%; object-fit: contain; }
-.Video-Container { position: relative; width: 100%; height: 100%; }
-
-.Resumen-Portafolio { background: #252525; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-.Link-Insta { color: #d4af37; text-decoration: none; font-weight: bold; margin-bottom: 10px; display: block; }
-
-.Btn-Final-WA { width: 100%; padding: 15px; background: #25d366; color: white; border: none; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
-
-/* 4. FORMULARIO (Igual profesional) */
-.Citas-Section { padding: 50px 20px; background: var(--color-negro-fondo); }
-.Citas-Form { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-.input-cita { padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; }
-.Btn-Enviar-Cita { padding: 12px; background: var(--color-dorado-principal); color: var(--color-negro-fondo); border: none; cursor: pointer; font-weight: bold; }
+export default App;
